@@ -120,7 +120,6 @@ const UserList = () => {
   let initOptions = {
     selectableRows: "single",
     selectableRowsHideCheckboxes: true,
-    rowsPerPageOptions: [10, 25, 50, 100],
     download: false,
     search: false,
     print: false,
@@ -131,6 +130,25 @@ const UserList = () => {
     count: 100,
     page: state.page,
     serverSide: true,
+    rowsPerPageOptions: false,
+    onTableChange: (action, tableState) => {
+      // a developer could react to change on an action basis or
+      // examine the state as a whole and do whatever they want
+
+      switch (action) {
+        case "changePage":
+          changePage(tableState.page, tableState.sortOrder);
+          break;
+        default:
+      }
+    },
+  };
+
+  const changePage = (page, sortOrder) => {
+    setState((prevState) => ({
+      ...prevState,
+      page: page,
+    }));
   };
 
   return (
