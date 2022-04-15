@@ -130,11 +130,8 @@ const UserList = () => {
     count: 100,
     page: state.page,
     serverSide: true,
-    rowsPerPageOptions: false,
+    rowsPerPageOptions: [],
     onTableChange: (action, tableState) => {
-      // a developer could react to change on an action basis or
-      // examine the state as a whole and do whatever they want
-
       switch (action) {
         case "changePage":
           changePage(tableState.page, tableState.sortOrder);
