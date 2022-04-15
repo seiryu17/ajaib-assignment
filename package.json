@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
+    "array-sort": "^1.0.0",
     "axios": "^0.26.1",
     "date-fns": "^2.28.0",
     "mui-datatables": "^3.8.0",
