@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MUIDataTable from "mui-datatables";
 import {
   Button,
@@ -14,6 +14,7 @@ import {
 import SearchIcon from "@material-ui/icons/Search";
 import { format, parseISO } from "date-fns";
 import { get } from "../../helper/network";
+import arraySort from "array-sort";
 
 const useStyles = makeStyles({
   container: {
@@ -34,82 +35,36 @@ const useStyles = makeStyles({
 
 const UserList = () => {
   const classes = useStyles();
+
   const [state, setState] = useState({
-    age: "all",
+    gender: "all",
     userListData: [],
+    userListDataTemp: [],
     page: 0,
+    search: "",
   });
-
-  const handleChange = (event) => {
-    setState((prevState) => ({
-      ...prevState,
-      age: event.target.value,
-    }));
-  };
-
-  const getData = async (page) => {
-    const result = await get(`/api/?page=${page + 1}&results=10&seed=abc`);
-    if (result.status === 200) {
-      result.data.results.map((x) => {
-        return (
-          (x.userName = x.login.username),
-          x.name ? (x.name = x.name.first + " " + x.name.last) : null,
-          (x.registered = x.registered.date)
-        );
-      });
-      setState((prevState) => ({
-        ...prevState,
-        userListData: result.data.results,
-      }));
-    } else if (result.status === 404) {
-      setState((prevState) => ({
-        ...prevState,
-        userListData: 404,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    getData(state.page);
-  }, [state.page]);
 
   let initCols = [
     {
       name: "userName",
       label: "Username",
-      options: {
-        sort: false,
-      },
     },
     {
       name: "name",
       label: "Name",
-      options: {
-        sort: false,
-      },
     },
     {
       name: "email",
       label: "Email",
-      options: {
-        filter: false,
-        sort: false,
-      },
     },
     {
       name: "gender",
       label: "Gender",
-      options: {
-        filter: false,
-        sort: false,
-      },
     },
     {
       name: "registered",
-      label: "Email",
+      label: "Registered Date",
       options: {
-        filter: false,
-        sort: false,
         customBodyRender: (value, tableMeta, updateValue) => {
           return format(parseISO(value), "dd/MM/yyyy");
         },
@@ -136,15 +91,112 @@ const UserList = () => {
         case "changePage":
           changePage(tableState.page, tableState.sortOrder);
           break;
+        case "sort":
+          let temp;
+          if (tableState.sortOrder.direction === "desc") {
+            temp = arraySort(state.userListData, tableState.sortOrder.name, {
+              reverse: true,
+            });
+          } else {
+            temp = arraySort(state.userListData, tableState.sortOrder.name);
+          }
+          setState((prevState) => ({
+            ...prevState,
+            userListData: temp,
+          }));
+          break;
         default:
       }
     },
   };
 
-  const changePage = (page, sortOrder) => {
+  const getData = useCallback(
+    async (page) => {
+      let url;
+      if (state.gender !== "all") {
+        url = `/api/?page=${page + 1}&gender=${state.gender}&results=10`;
+      } else {
+        url = `/api/?page=${page + 1}&results=10&seed=abc`;
+      }
+
+      const result = await get(url);
+      if (result.status === 200) {
+        result.data.results.map((x) => {
+          return (
+            (x.userName = x.login.username),
+            x.name ? (x.name = x.name.first + " " + x.name.last) : null,
+            (x.registered = x.registered.date)
+          );
+        });
+        setState((prevState) => ({
+          ...prevState,
+          userListData: result.data.results,
+          userListDataTemp: result.data.results,
+        }));
+      } else if (result.status === 404) {
+        setState((prevState) => ({
+          ...prevState,
+          userListData: 404,
+          userListDataTemp: 404,
+        }));
+      }
+    },
+    [state.gender]
+  );
+
+  useEffect(() => {
+    getData(state.page);
+  }, [getData, state.page, state.gender]);
+
+  const handleChange = (event) => {
+    setState((prevState) => ({
+      ...prevState,
+      gender: event.target.value,
+      page: 0,
+    }));
+  };
+
+  const changePage = (page) => {
     setState((prevState) => ({
       ...prevState,
       page: page,
+    }));
+  };
+
+  const resetFilter = () => {
+    setState((prevState) => ({
+      ...prevState,
+      gender: "all",
+    }));
+    getData(state.page);
+  };
+
+  const handleChangeSearch = (e) => {
+    setState((prevState) => ({
+      ...prevState,
+      search: e.target.value,
+    }));
+  };
+
+  const handleClickSearch = () => {
+    let tempData = [...state.userListDataTemp];
+    tempData = state.userListDataTemp.filter((val) => {
+      if (state.search === "") {
+        return val;
+      } else if (
+        val.userName.toLowerCase().includes(state.search.toLowerCase()) ||
+        val.name.toLowerCase().includes(state.search.toLowerCase()) ||
+        val.email.toLowerCase().includes(state.search.toLowerCase()) ||
+        val.gender.toLowerCase().includes(state.search.toLowerCase()) ||
+        val.registered.toLowerCase().includes(state.search.toLowerCase())
+      ) {
+        return val;
+      }
+      return false;
+    });
+    setState((prevState) => ({
+      ...prevState,
+      userListData: tempData,
     }));
   };
 
@@ -161,11 +213,13 @@ const UserList = () => {
               variant="outlined"
               placeholder="Search.."
               label="Search"
+              onChange={handleChangeSearch}
             />
             <Button
               className={classes.buttonIcon}
               variant="contained"
               color="primary"
+              onClick={handleClickSearch}
             >
               <SearchIcon />
             </Button>
@@ -182,18 +236,23 @@ const UserList = () => {
               <Select
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
-                value={state.age}
+                value={state.gender}
                 onChange={handleChange}
                 label="Age"
               >
                 <MenuItem value="all">All</MenuItem>
-                <MenuItem value={1}>Male</MenuItem>
-                <MenuItem value={2}>Female</MenuItem>
+                <MenuItem value="male">Male</MenuItem>
+                <MenuItem value="female">Female</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item>
-            <Button className={classes.button} variant="outlined" size="medium">
+            <Button
+              className={classes.button}
+              variant="outlined"
+              size="medium"
+              onClick={resetFilter}
+            >
               Reset Filter
             </Button>
           </Grid>
