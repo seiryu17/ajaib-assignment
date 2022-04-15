@@ -1,70 +1,39 @@
-# Getting Started with Create React App
+# ajaib-assignment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is commissioned by ajaib to test my techical skill for my job application as the frontend web engineer in ajaib company.
 
-## Available Scripts
+## Dependency
 
-In the project directory, you can run:
+The dependency i used to build this project :
 
-### `npm start`
+- Material UI
+- Axios
+- Date/fns
+- ArraySort
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## The First Step
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The first thing i did is to make the main page of the project, which is The title of the project "Example With Search and Filter" using typhography component,
+after that i started to implement the TextField and the Button component for the debounce search,
+after that i implement the TextField and Button component for the filter function,
+the next thing i make the helper to ease me to try and catch API from backend, and then im using Axios as helper to fetch data from backend which is from https://randomuser.me/documentation, and after that im using useEffect to fetch the data when the page loaded at the first time.
 
-### `npm test`
+## Pagination
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+after finish fetching the data and then i serve the data to the datatable, the next thing im implementing the pagination in the datatable, so everytime user click the next page, frontend will request API with the page parameter to backend.
 
-### `npm run build`
+## Filter
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+i create the filter function, to allow user to filter the data by gender, so everytime the user choose the dropdown the state will be filled in and frontend will request to the backend by the state filled in before with the filter gender paramater provided by the backend, but i figured out the filter wont work with the seed parameter, seed parameter is to ensure the data you get is the same even you refresh the page or refetch data from the API, so the filter is just to filter gender but with another random data.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Reset Filter
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+i create the reset filter function by resetting the state filled before.
 
-### `npm run eject`
+## Sort By Column
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+this function is to allow user sorting the column by clicking the column name, this sort is implemented by sorting the data from the existing table, because the backend doesnt provide the sort parameter for the API, so i just sort the 10 existing data to show how i done it, im using sort array to sort the data array from the existing data.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Search By Keyword
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+this function is to allow user search the data by typing anything to the search textfield, this search is also implemented to search data from the existing table, becuase the backend doesnt provide the keyword paramter for the API, ive try the keyword API but it does nothing, so its just searching for the 10 existing data, im using filter built-in function from javascript to achive this.
