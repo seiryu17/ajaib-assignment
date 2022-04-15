@@ -10,6 +10,7 @@ import {
   InputLabel,
   FormControl,
   MenuItem,
+  CircularProgress,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { format, parseISO } from "date-fns";
@@ -42,6 +43,7 @@ const UserList = () => {
     userListDataTemp: [],
     page: 0,
     search: "",
+    isLoading: false,
   });
 
   let initCols = [
@@ -112,6 +114,10 @@ const UserList = () => {
 
   const getData = useCallback(
     async (page) => {
+      setState((prevState) => ({
+        ...prevState,
+        isLoading: true,
+      }));
       let url;
       if (state.gender !== "all") {
         url = `/api/?page=${page + 1}&gender=${state.gender}&results=10`;
@@ -120,6 +126,12 @@ const UserList = () => {
       }
 
       const result = await get(url);
+      if (result.data) {
+        setState((prevState) => ({
+          ...prevState,
+          isLoading: false,
+        }));
+      }
       if (result.status === 200) {
         result.data.results.map((x) => {
           return (
@@ -259,11 +271,14 @@ const UserList = () => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <MUIDataTable
-          data={state.userListData}
-          columns={initCols}
-          options={initOptions}
-        />
+        {state.isLoading && <CircularProgress />}
+        {!state.isLoading && (
+          <MUIDataTable
+            data={state.userListData}
+            columns={initCols}
+            options={initOptions}
+          />
+        )}
       </Grid>
     </Grid>
   );
