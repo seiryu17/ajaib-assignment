@@ -34,44 +34,12 @@ const useStyles = makeStyles({
 
 const UserList = () => {
   const classes = useStyles();
+
   const [state, setState] = useState({
-    age: "all",
+    gender: "all",
     userListData: [],
     page: 0,
   });
-
-  const handleChange = (event) => {
-    setState((prevState) => ({
-      ...prevState,
-      age: event.target.value,
-    }));
-  };
-
-  const getData = async (page) => {
-    const result = await get(`/api/?page=${page + 1}&results=10&seed=abc`);
-    if (result.status === 200) {
-      result.data.results.map((x) => {
-        return (
-          (x.userName = x.login.username),
-          x.name ? (x.name = x.name.first + " " + x.name.last) : null,
-          (x.registered = x.registered.date)
-        );
-      });
-      setState((prevState) => ({
-        ...prevState,
-        userListData: result.data.results,
-      }));
-    } else if (result.status === 404) {
-      setState((prevState) => ({
-        ...prevState,
-        userListData: 404,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    getData(state.page);
-  }, [state.page]);
 
   let initCols = [
     {
@@ -141,11 +109,65 @@ const UserList = () => {
     },
   };
 
-  const changePage = (page, sortOrder) => {
+  const getData = async (page, filter) => {
+    let url;
+    if (filter) {
+      url = `/api/?page=${page + 1}&gender=${filter}&results=10`;
+    } else {
+      url = `/api/?page=${page + 1}&results=10&seed=abc`;
+    }
+    const result = await get(url);
+    if (result.status === 200) {
+      result.data.results.map((x) => {
+        return (
+          (x.userName = x.login.username),
+          x.name ? (x.name = x.name.first + " " + x.name.last) : null,
+          (x.registered = x.registered.date)
+        );
+      });
+      setState((prevState) => ({
+        ...prevState,
+        userListData: result.data.results,
+      }));
+    } else if (result.status === 404) {
+      setState((prevState) => ({
+        ...prevState,
+        userListData: 404,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    getData(state.page);
+    // eslint-disable-next-line
+  }, []);
+
+  const handleChange = (event) => {
+    setState((prevState) => ({
+      ...prevState,
+      gender: event.target.value,
+    }));
+    getData(state.page, event.target.value);
+  };
+
+  const changePage = (page) => {
     setState((prevState) => ({
       ...prevState,
       page: page,
     }));
+    if (state.gender !== "all") {
+      getData(page, state.gender);
+    } else {
+      getData(page);
+    }
+  };
+
+  const resetFilter = () => {
+    setState((prevState) => ({
+      ...prevState,
+      gender: "all",
+    }));
+    getData(state.page);
   };
 
   return (
@@ -182,18 +204,23 @@ const UserList = () => {
               <Select
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
-                value={state.age}
+                value={state.gender}
                 onChange={handleChange}
                 label="Age"
               >
                 <MenuItem value="all">All</MenuItem>
-                <MenuItem value={1}>Male</MenuItem>
-                <MenuItem value={2}>Female</MenuItem>
+                <MenuItem value="male">Male</MenuItem>
+                <MenuItem value="female">Female</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item>
-            <Button className={classes.button} variant="outlined" size="medium">
+            <Button
+              className={classes.button}
+              variant="outlined"
+              size="medium"
+              onClick={resetFilter}
+            >
               Reset Filter
             </Button>
           </Grid>
