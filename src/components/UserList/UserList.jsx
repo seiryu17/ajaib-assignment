@@ -20,6 +20,7 @@ import arraySort from "array-sort";
 const useStyles = makeStyles({
   container: {
     padding: "3rem",
+    gap: "1.5rem",
   },
   buttonIcon: {
     height: "100%",
@@ -213,7 +214,7 @@ const UserList = () => {
   };
 
   return (
-    <Grid container direction="row" spacing={3} className={classes.container}>
+    <Grid container direction="row" className={classes.container}>
       <Grid item xs={12}>
         <Typography variant="h5">Example With Search and Filter</Typography>
       </Grid>
@@ -243,14 +244,16 @@ const UserList = () => {
               className={classes.formControl}
             >
               <InputLabel id="demo-simple-select-outlined-label">
-                Age
+                Gender
               </InputLabel>
               <Select
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 value={state.gender}
                 onChange={handleChange}
-                label="Age"
+                label="Gender"
+                inputProps={{ "data-testid": "content-input" }}
+                data-testid="dropdown"
               >
                 <MenuItem value="all">All</MenuItem>
                 <MenuItem value="male">Male</MenuItem>
