@@ -2,6 +2,12 @@
 
 This project is commissioned by ajaib to test my techical skill for my job application as the frontend web engineer in ajaib company.
 
+### `npm start`
+
+Before running this script you need to `npm install` first. \
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
 ## Dependency
 
 The dependency i used to build this project :
@@ -37,3 +43,11 @@ this function is to allow user sorting the column by clicking the column name, t
 ## Search By Keyword
 
 this function is to allow user search the data by typing anything to the search textfield, this search is also implemented to search data from the existing table, becuase the backend doesnt provide the keyword paramter for the API, ive try the keyword API but it does nothing, so its just searching for the 10 existing data, im using filter built-in function from javascript to achive this.
+
+## for Better Web Performance
+
+To use React.Lazy to prevent load unused bundle package, e.g: when we are in the dashboard page, the other page doesnt need to be loaded.
+To use React.memo to prevent useless rerender, because in react mechanism when we changing something in the parent component, the child component will be rerendered as well.
+To use state in the local child component, instead of in a high order parent.
+To use lazyload for rendering the image content.
+SPA web fasten the user interaction
