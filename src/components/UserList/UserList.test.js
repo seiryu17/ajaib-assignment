@@ -1,6 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import UserList from "../UserList/UserList";
 import userEvent from "@testing-library/user-event";
+import axios from "axios";
+
+jest.mock("axios");
 
 test("Render Page Header", () => {
   render(<UserList />);
@@ -21,5 +24,5 @@ it("Change dropdown value to male", async () => {
   fireEvent.change(contentInput, {
     target: { value: "male" },
   });
-  // expect(contentInput).toHaveValue("male");
+  expect(contentInput).toHaveValue("male");
 });
