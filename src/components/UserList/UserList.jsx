@@ -181,7 +181,6 @@ const UserList = () => {
       ...prevState,
       gender: "all",
     }));
-    getData(state.page);
   };
 
   const handleChangeSearch = (e) => {
